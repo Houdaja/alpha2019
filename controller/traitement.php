@@ -267,6 +267,10 @@ $select_date = '';
 $year = date('Y');
 $century = $year - 100;
 
+if($_POST){
+
+    debugV($_POST);
+}
 
 // 2.2- récupération des infos pour la modification
 if (isset($_GET['action']) && $_GET['action'] == 'update' && isset($_GET['id'])){
@@ -279,26 +283,30 @@ if (isset($_GET['action']) && $_GET['action'] == 'update' && isset($_GET['id']))
         // récupération des infos en BDD pour affichage dans le formulaire de modification
         $school_update = $req->fetch(PDO::FETCH_ASSOC);
 //        extract($school_update);
+        //$year = $school_update['sgdate'];
     }
+//    debugV($year);
 }
 
-for ($i = $year; $i >= $century; $i--) {
-    if ($_POST && isset($_POST['sgdate']) && $_POST['sgdate'] == $i) {
-        $select_date .= '<option selected>' . $i . '</option>';
+while($year >= $century){
+    if(isset($_GET['action']) && $_GET['action'] == 'update' && isset($_GET['id']) && $_GET['id'] == $school_update['idschooling'] && $school_update['sgdate'] == $year){
+        $select_date .= '<option selected>' . $year . '</option>';
     }
-    elseif (isset($_GET['action']) && $_GET['action'] == 'update' && isset($_GET['id']) && $_GET['id'] == $i){
-        $select_date .= '<option selected>' . $school_update['sgdate'] . '</option>';
+    elseif ($_POST && isset($_POST['sgdate']) && $_POST['sgdate'] == $year) {
+        $select_date .= '<option selected>' . $year . '</option>';
+    } else {
+        $select_date .= '<option>' . $year . '</option>';
     }
-    else{
-        $select_date .= '<option>' . $i . '</option>';
-    }
+    $year--;
 }
+
 
 // 2.2- traitement du formulaire => enregistrement en BDD
 if($_POST && isset($_POST['sgdate']) && isset($_POST['sgtitle']) && isset($_POST['sgsubtitle']) && isset($_POST['sgdescription']) ){
 
     // 2.2.1- contrôles du formulaire
-    if (!isset($_POST['sgdate']) || !is_numeric($_POST['sgdate']) || $_POST['sgdate'] > $year || ($_POST['sgdate']) < $century) $msg .= '<div class="alert alert-danger">L\'année est incorrecte.</div>';
+    if (!isset($_POST['sgdate']) || !is_numeric($_POST['sgdate']) || $_POST['sgdate'] > date('Y') || ($_POST['sgdate']) < $century) $msg .= '<div class="alert alert-danger">L\'année est incorrecte.</div>';
+//    if (!isset($_POST['sgdate']) || !is_numeric($_POST['sgdate']) || $_POST['sgdate'] > $year || ($_POST['sgdate']) < $century || $_POST['sgdate'] == 'annee') $msg .= '<div class="alert alert-danger">L\'année est incorrecte.</div>';
     if (!isset($_POST['sgtitle']) || strlen($_POST['sgtitle']) < 2 || strlen($_POST['sgtitle']) > 100) $msg .= '<div class="alert alert-danger">Le titre de la formation doit contenir entre 2 et 100 caractères.</div>';
     if (!isset($_POST['sgsubtitle']) || strlen($_POST['sgsubtitle']) < 2 || strlen($_POST['sgsubtitle']) > 150) $msg .= '<div class="alert alert-danger">La spécialité de la formation doit contenir entre 2 et 150 caractères.</div>';
     if (!isset($_POST['sgdescription']) || strlen($_POST['sgdescription']) < 2 || strlen($_POST['sgdescription']) > 200) $msg .= '<div class="alert alert-danger">Le descriptif de la formation peut contenir entre 2 et 200 caractères.</div>';

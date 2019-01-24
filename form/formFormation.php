@@ -7,13 +7,22 @@ session_start();
 <div class="container">
 
     <div class="row">
-        <h5> Ajouter une formation : </h5>
+        <h5><?php
+	        if(isset($_GET['action']) && $_GET['action'] == 'update' && isset($_GET['id'])){
+	        	echo 'Modifier une formation : ';
+	        } else {
+	        	echo 'Ajouter une formation : ';
+	        }
+	        ?></h5>
         <div class="col-lg-4 offset-2 mt-5">
             <form method="POST">
                 <?php
                     echo $msg;
                 ?>
-	            <input type="hidden" name="idschooling" value="0"> <!-- champ caché utile pour la modification d'un élément existant car on a besoin de le connaître pour la requête SQL REPLACE INTO qui se comporte comme un UPDATE en présence d'un ID existant. La value à 0 permet de spécifier que l'ID n'existe pas, donc que REPLACE INTO doit se comporter comme un INSERT pour créer la ligne en BDD -->
+	            <input type="hidden" name="idschooling" value="<?php  if (isset($_GET['action']) && $_GET['action'] == 'update' && isset($_GET['id'])){ echo $school_update['idschooling']; }
+	            else { echo "0"; }?>"> <!-- champ caché utile pour la modification d'un élément existant car on a besoin
+	            de le
+	            connaître pour la requête SQL REPLACE INTO qui se comporte comme un UPDATE en présence d'un ID existant. La value à 0 permet de spécifier que l'ID n'existe pas, donc que REPLACE INTO doit se comporter comme un INSERT pour créer la ligne en BDD -->
                 <div class="form-group">
                     <select name="sgdate" class="form-control custom-select">
 	                    <option value="">Année</option>
